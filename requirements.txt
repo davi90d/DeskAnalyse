@@ -1,0 +1,10 @@
+wmi
+psutil
+platform
+py-cpuinfo
+screeninfo
+pywin32
+sounddevice
+opencv-python
+pynput
+pillow
