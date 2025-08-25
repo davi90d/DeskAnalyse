@@ -18,6 +18,7 @@ class ReportGenerator:
         self.identification = {}
         self.test_results = {}
         self.test_details = {}
+        self.output_directory = os.path.join(os.path.expanduser("~"), "Desktop")
     
     def set_hardware_info(self, hardware_info):
         """Define as informações de hardware."""
@@ -32,6 +33,10 @@ class ReportGenerator:
         self.test_results[test_name] = result
         self.test_details[test_name] = formatted_result
     
+    def set_output_directory(self, path):
+        """Define o diretório de saída para o relatório."""
+        self.output_directory = path
+
     def generate_report(self):
         """Gera o relatório."""
         try:
@@ -112,12 +117,32 @@ class ReportGenerator:
                 content.append(f"  Modelo: {self.hardware_info['cpu'].get('model', 'Não disponível')}")
                 content.append("")
             
+            # Discos
+            if 'disks' in self.hardware_info and self.hardware_info['disks']:
+                content.append("Discos:")
+                for i, disk in enumerate(self.hardware_info['disks'], 1):
+                    if isinstance(disk, dict):
+                        content.append(f"  Disco {i}: {disk.get('model', 'N/A')} - {disk.get('size', 'N/A')}")
+                    else:
+                        content.append(f"  Disco {i}: {disk}")
+                content.append("")
+
             # Memória RAM
             if 'ram' in self.hardware_info:
                 content.append("Memória RAM:")
                 content.append(f"  Total: {self.hardware_info['ram'].get('total', 'Não disponível')}")
                 content.append(f"  Slots Usados: {self.hardware_info['ram'].get('slots_used', 'Não disponível')}")
                 content.append("")
+
+            # GPU
+            if 'gpu' in self.hardware_info and self.hardware_info['gpu']:
+                content.append("Placas de Vídeo:")
+                for i, gpu in enumerate(self.hardware_info['gpu'], 1):
+                    if isinstance(gpu, dict):
+                        content.append(f"  GPU {i}: {gpu.get('model', 'N/A')}")
+                    else:
+                        content.append(f"  GPU {i}: {gpu}")
+                content.append("")    
             
             # Display
             if 'display' in self.hardware_info:

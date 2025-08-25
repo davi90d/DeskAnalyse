@@ -1,3 +1,8 @@
+"""
+Módulo para gerenciamento da interface gráfica principal.
+Implementa a janela principal da aplicação com abas reorganizadas para Linux.
+"""
+
 import os
 import sys
 import time
@@ -284,14 +289,6 @@ class MainWindow:
         ram_frame = ttk.LabelFrame(self.hardware_frame, text="Memória RAM", padding=10)
         ram_frame.pack(fill=tk.X, pady=5)
         
-        ttk.Label(ram_frame, text="Total:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=2)
-        self.ram_total_var = tk.StringVar(value="Carregando...")
-        ttk.Label(ram_frame, textvariable=self.ram_total_var).grid(row=0, column=1, sticky=tk.W, padx=5, pady=2)
-        
-        ttk.Label(ram_frame, text="Slots Utilizados:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=2)
-        self.ram_slots_var = tk.StringVar(value="Carregando...")
-        ttk.Label(ram_frame, textvariable=self.ram_slots_var).grid(row=1, column=1, sticky=tk.W, padx=5, pady=2)
-        
         # Frame para módulos de memória
         self.ram_modules_frame = ttk.Frame(ram_frame)
         self.ram_modules_frame.grid(row=2, column=0, columnspan=2, sticky=tk.W, padx=5, pady=5)
@@ -300,29 +297,16 @@ class MainWindow:
         disks_frame = ttk.LabelFrame(self.hardware_frame, text="Discos", padding=10)
         disks_frame.pack(fill=tk.X, pady=5)
         
-        # Treeview para discos
-        self.disk_tree = ttk.Treeview(disks_frame, columns=("model", "type", "size", "free"), show="headings", height=4)
-        self.disk_tree.heading("model", text="Modelo")
-        self.disk_tree.heading("type", text="Tipo")
-        self.disk_tree.heading("size", text="Tamanho")
-        self.disk_tree.heading("free", text="Livre")
-        
-        self.disk_tree.column("model", width=150)
-        self.disk_tree.column("type", width=80)
-        self.disk_tree.column("size", width=80)
-        self.disk_tree.column("free", width=80)
-        
-        self.disk_tree.pack(fill=tk.BOTH, expand=True)
-        
-        # Frame para informações da placa de vídeo
-        gpu_frame = ttk.LabelFrame(self.hardware_frame, text="Placa de Vídeo", padding=10)
+        # frame para disco
+        self.disks_info_frame = ttk.Frame(disks_frame)
+        self.disks_info_frame.pack(fill=tk.X, padx=5, pady=5)
+
+        # Frame para informação da placa de video
+        gpu_frame = ttk.LabelFrame(self.hardware_frame, text='Placa de Vídeo', padding=10)
         gpu_frame.pack(fill=tk.X, pady=5)
-        
-        # Treeview para GPUs
-        self.gpu_tree = ttk.Treeview(gpu_frame, columns=("name"), show="headings", height=2)
-        self.gpu_tree.heading("name", text="Modelo")
-        self.gpu_tree.column("name", width=300)
-        self.gpu_tree.pack(fill=tk.BOTH, expand=True)
+
+        self.gpu_info_frame = ttk.Frame(gpu_frame)
+        self.gpu_info_frame.pack(fill=tk.X, padx=5, pady=5)
         
         # Frame para informações do display
         display_frame = ttk.LabelFrame(self.hardware_frame, text="Display", padding=10)
@@ -332,10 +316,14 @@ class MainWindow:
         self.display_resolution_var = tk.StringVar(value="Carregando...")
         ttk.Label(display_frame, textvariable=self.display_resolution_var).grid(row=0, column=1, sticky=tk.W, padx=5, pady=2)
         
-        # Frame para informações do TPM
-        tpm_frame = ttk.LabelFrame(self.hardware_frame, text="TPM (Trusted Platform Module)", padding=10)
-        tpm_frame.pack(fill=tk.X, pady=5)
-        
+        # Frame horizontal para agrupar os três blocos lado a lado
+        info_row = ttk.Frame(self.hardware_frame)
+        info_row.pack(fill=tk.X, pady=5)
+
+        # --- TPM ---
+        tpm_frame = ttk.LabelFrame(info_row, text="TPM", padding=10)
+        tpm_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
+
         ttk.Label(tpm_frame, text="Versão:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=2)
         self.tpm_version_var = tk.StringVar(value="Carregando...")
         ttk.Label(tpm_frame, textvariable=self.tpm_version_var).grid(row=0, column=1, sticky=tk.W, padx=5, pady=2)
@@ -343,35 +331,35 @@ class MainWindow:
         ttk.Label(tpm_frame, text="Status:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=2)
         self.tpm_status_var = tk.StringVar(value="Carregando...")
         ttk.Label(tpm_frame, textvariable=self.tpm_status_var).grid(row=1, column=1, sticky=tk.W, padx=5, pady=2)
-        
+
         ttk.Label(tpm_frame, text="Fabricante:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=2)
         self.tpm_manufacturer_var = tk.StringVar(value="Carregando...")
         ttk.Label(tpm_frame, textvariable=self.tpm_manufacturer_var).grid(row=2, column=1, sticky=tk.W, padx=5, pady=2)
-        
-        # Frame para informações do Bluetooth
-        bluetooth_frame = ttk.LabelFrame(self.hardware_frame, text="Bluetooth", padding=10)
-        bluetooth_frame.pack(fill=tk.X, pady=5)
-        
+
+        # --- Bluetooth ---
+        bluetooth_frame = ttk.LabelFrame(info_row, text="Bluetooth", padding=10)
+        bluetooth_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
+
         ttk.Label(bluetooth_frame, text="Dispositivo:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=2)
         self.bluetooth_device_var = tk.StringVar(value="Carregando...")
         ttk.Label(bluetooth_frame, textvariable=self.bluetooth_device_var).grid(row=0, column=1, sticky=tk.W, padx=5, pady=2)
-        
+
         ttk.Label(bluetooth_frame, text="Status:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=2)
         self.bluetooth_status_var = tk.StringVar(value="Carregando...")
         ttk.Label(bluetooth_frame, textvariable=self.bluetooth_status_var).grid(row=1, column=1, sticky=tk.W, padx=5, pady=2)
-        
-        # Frame para informações do Wi-Fi
-        wifi_frame = ttk.LabelFrame(self.hardware_frame, text="Wi-Fi", padding=10)
-        wifi_frame.pack(fill=tk.X, pady=5)
-        
-        ttk.Label(wifi_frame, text="Adaptador:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=2)
+
+        # --- Wi-Fi ---
+        wifi_frame = ttk.LabelFrame(info_row, text="Wi-Fi", padding=10)
+        wifi_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
+
+        ttk.Label(wifi_frame, text="Chip:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=2)
         self.wifi_adapter_var = tk.StringVar(value="Carregando...")
         ttk.Label(wifi_frame, textvariable=self.wifi_adapter_var).grid(row=0, column=1, sticky=tk.W, padx=5, pady=2)
-        
+
         ttk.Label(wifi_frame, text="Status:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=2)
         self.wifi_status_var = tk.StringVar(value="Carregando...")
         ttk.Label(wifi_frame, textvariable=self.wifi_status_var).grid(row=1, column=1, sticky=tk.W, padx=5, pady=2)
-        
+
         ttk.Label(wifi_frame, text="Rede Conectada:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=2)
         self.wifi_ssid_var = tk.StringVar(value="Carregando...")
         ttk.Label(wifi_frame, textvariable=self.wifi_ssid_var).grid(row=2, column=1, sticky=tk.W, padx=5, pady=2)
@@ -579,20 +567,21 @@ class MainWindow:
         self.cpu_brand_var.set(state)
         self.cpu_model_var.set(state)
         # RAM
-        self.ram_total_var.set(state)
-        self.ram_slots_var.set(state)
         for widget in self.ram_modules_frame.winfo_children():
             widget.destroy()
         if loading:
              ttk.Label(self.ram_modules_frame, text=state).grid(row=0, column=0, sticky=tk.W, padx=5, pady=2)
         # Discos
-        self.disk_tree.delete(*self.disk_tree.get_children())
+        for widget in self.disks_info_frame.winfo_children():
+            widget.destroy()
         if loading:
-            self.disk_tree.insert("", 0, values=(state, state, state, state))
+           ttk.Label(self.disks_info_frame, text=state).pack(anchor=tk.W, padx=5, pady=2)
         # GPU
-        self.gpu_tree.delete(*self.gpu_tree.get_children())
+        for widget in self.gpu_info_frame.winfo_children():
+            widget.destroy()
         if loading:
-            self.gpu_tree.insert("", 0, values=(state,))
+            ttk.Label(self.gpu_info_frame, text=state).pack(anchor=tk.W, padx=5, pady=2)
+            
         # Display
         self.display_resolution_var.set(state)
         # TPM
@@ -636,7 +625,7 @@ class MainWindow:
         # Se ocorreu um erro grave durante a coleta, exibe aviso e usa "Erro" nos campos
         default_value = "Erro na coleta" if error_occurred else "Não disponível"
         if error_occurred:
-             messagebox.showerror("Erro na Coleta", f"Não foi possível coletar todas as informações de hardware.\nDetalhes: {error_message}")
+            messagebox.showerror("Erro na Coleta", f"Não foi possível coletar todas as informações de hardware.\nDetalhes: {error_message}")
 
         # Extrai informações individuais ou usa dicionário vazio se não existir
         motherboard_info = all_info.get("motherboard", {})
@@ -658,60 +647,57 @@ class MainWindow:
         self.cpu_brand_var.set(cpu_info.get("brand", default_value))
         self.cpu_model_var.set(cpu_info.get("model", default_value))
         
-        # Atualiza as informações da memória RAM
-        self.ram_total_var.set(ram_info.get("total", default_value))
-        self.ram_slots_var.set(ram_info.get("slots_used", default_value))
-        
+
         # Limpa o frame de módulos de memória
         for widget in self.ram_modules_frame.winfo_children():
             widget.destroy()
-        
-        # Adiciona os módulos de memória
-        modules = ram_info.get("modules", [])
-        if modules:
-            for i, module in enumerate(modules):
-                if isinstance(module, dict):
-                    module_text = f"Slot {i+1}: {module.get('size', 'N/A')} - {module.get('manufacturer', 'N/A')}"
-                else:
-                    module_text = f"Slot {i+1}: {module}"
-                ttk.Label(self.ram_modules_frame, text=module_text).pack(anchor=tk.W)
-        elif not error_occurred:
-             ttk.Label(self.ram_modules_frame, text=default_value).pack(anchor=tk.W)
 
-        # Limpa a treeview de discos
-        self.disk_tree.delete(*self.disk_tree.get_children())
+        modules = ram_info.get("modules", [])
+        if modules:            
+            # Exibe cada módulo no formato solicitado: BANK X : X.XX GB XXXX MHz
+            for module in modules:
+                bank_label = module.get("banklabel", "BANK N/A")
+                size = module.get("size", "N/A GB")
+                speed = module.get("speed", "N/A MHz")
+                
+                # Remove " GB" e " MHz" se existirem para formatar corretamente
+                size_value = size.replace(" GB", "").strip()
+                speed_value = speed.replace(" MHz", "").strip()
+                
+                module_text = f"{bank_label} : {size_value} GB {speed_value} MHz"
+                ttk.Label(self.ram_modules_frame, text=module_text, style="Info.TLabel").pack(anchor=tk.W, padx=5, pady=1)
+        else:
+            ttk.Label(self.ram_modules_frame, text=default_value).pack(anchor=tk.W)
+        
+        for widget in self.disks_info_frame.winfo_children():
+            widget.destroy()
         
         # Adiciona os discos
         if disks_info:
             for i, disk in enumerate(disks_info):
                 if isinstance(disk, dict):
-                    self.disk_tree.insert(
-                        "",
-                        i,
-                        values=(
-                            disk.get('model', 'Não disponível'),
-                            disk.get('type', 'Não disponível'),
-                            disk.get('size', 'Não disponível'),
-                            disk.get('free_space', 'Não disponível')
-                        )
-                    )
+                    disk_model = disk.get("model", "Não disponivel")
+                    disk_size = disk.get('size', 'Não disponivel')
+                    disk_text = f'{disk_model} - {disk_size}'
+                    ttk.Label(self.disks_info_frame, text=disk_text, style="Info.TLabel").pack(anchor=tk.W, padx=5, pady=1)
                 else:
-                    self.disk_tree.insert("", i, values=(str(disk), "N/A", "N/A", "N/A"))
-        elif not error_occurred:
-             self.disk_tree.insert("", 0, values=(default_value, default_value, default_value, default_value))
+                    ttk.Label(self.disks_info_frame, text=str(disk), style="Info.TLabel").pack(anchor=tk.W, padx=5, pady=1)
+        else:
+            ttk.Label(self.disks_info_frame, text=default_value).pack(anchor=tk.W)
 
-        # Limpa a treeview de GPUs
-        self.gpu_tree.delete(*self.gpu_tree.get_children())
+        for widget in self.gpu_info_frame.winfo_children():
+            widget.destroy()
         
         # Adiciona as GPUs
         if gpu_info:
             for i, gpu in enumerate(gpu_info):
                 if isinstance(gpu, dict):
-                    self.gpu_tree.insert("", i, values=(gpu.get('name', 'Não disponível'),))
+                    gpu_model = gpu.get('model', 'Não disponivel')
+                    ttk.Label(self.gpu_info_frame, text=gpu_model, style='Info.TLabel').pack(anchor=tk.W, padx=5, pady=1)
                 else:
-                    self.gpu_tree.insert("", i, values=(str(gpu),))
-        elif not error_occurred:
-             self.gpu_tree.insert("", 0, values=(default_value,))
+                    ttk.Label(self.gpu_info_frame, text=str(gpu), style='Info.TLabel').pack(anchor=tk.W, padx=5, pady=1)
+        else:
+            ttk.Label(self.gpu_info_frame, text=default_value).pack(anchor=tk.W)
 
         # Atualiza as informações do display
         self.display_resolution_var.set(display_info.get("resolution", default_value))
@@ -722,13 +708,13 @@ class MainWindow:
         self.tpm_manufacturer_var.set(tpm_info.get("manufacturer", default_value))
         
         # Atualiza as informações do Bluetooth
-        self.bluetooth_device_var.set(bluetooth_info.get("device", default_value))
-        self.bluetooth_status_var.set(bluetooth_info.get("status", default_value))
+        self.bluetooth_device_var.set(bluetooth_info.get("device_name", default_value))
+        self.bluetooth_status_var.set(bluetooth_info.get("device_status", default_value))
         
         # Atualiza as informações do Wi-Fi
-        self.wifi_adapter_var.set(wifi_info.get("adapter", default_value))
-        self.wifi_status_var.set(wifi_info.get("status", default_value))
-        self.wifi_ssid_var.set(wifi_info.get("ssid", default_value))
+        self.wifi_adapter_var.set(wifi_info.get("adapter_name", default_value))
+        self.wifi_status_var.set(wifi_info.get("adapter_status", default_value))
+        self.wifi_ssid_var.set(wifi_info.get("connected_ssid", default_value))
     
     def _refresh_hardware_info(self):
         """Atualiza as informações de hardware."""
@@ -866,75 +852,51 @@ class MainWindow:
         """Executa o teste de teclado."""
         # Cria o teste de teclado passando a janela principal como parent
         keyboard_test = KeyboardTest()
-        
+
         if keyboard_test.initialize():
             # Executa o teste em uma thread separada
             def run_test():
                 try:
                     keyboard_test.execute()
-                    
                     # Registra o resultado
                     self.root.after(0, lambda: self._handle_test_completion(
                         "keyboard",
                         keyboard_test.get_result(),
                         keyboard_test.get_formatted_result()
                     ))
+                except Exception as e:
+                    messagebox.showerror(
+                        "Erro",
+                        f"Ocorreu um erro ao executar o teste de teclado:\n\n{e}"
+                    )
+                    self.root.after(100, self._execute_next_test)
+            threading.Thread(target=run_test, daemon=True).start()
         else:
             error_message = keyboard_test.result.get("error", "Erro desconhecido ao inicializar o teste de teclado.")
             messagebox.showerror(
                 "Erro",
                 f"Ocorreu um erro ao inicializar o teste de teclado:\n\n{error_message}"
             )
-            
             # Executa o próximo teste
             self.root.after(100, self._execute_next_test)
-            
-            # Inicia a thread
-            threading.Thread(target=run_test, daemon=True).start()
-        else:
-            messagebox.showerror(
-                "Erro",
-                f"Ocorreu um erro ao inicializar o teste de teclado:\n\n{keyboard_test.result["error"]}"
-            )
-            
-            # Executa o próximo teste
-            self.root.after(100, self._execute_next_test)    
     def _run_usb_test(self):
         """Executa o teste de USB."""
         # Cria o teste de USB
-        usb_test = USBTest()
+        usb_test = USBTest(self.root, self._handle_test_completion)
         
         if usb_test.initialize():
-            # Executa o teste em uma thread separada
-            def run_test():
-                try:
-                    usb_test.execute()
-                    
-                    # Registra o resultado
-                    self.root.after(0, lambda: self._handle_test_completion(
-                        "usb",
-                        usb_test.get_result(),
-                        usb_test.get_formatted_result()
-                    ))                except Exception as e:
-                    messagebox.showerror(
-                        "Erro",
-                        f"Ocorreu um erro ao executar o teste de USB:\n\n{e}"
-                    )
-                    
-                    # Executa o próximo teste
-                    self.root.after(100, self._execute_next_test)
-            
-            # Inicia a thread
-            threading.Thread(target=run_test, daemon=True).start()
+            # Execute na thread principal!
+            self.root.after(0, usb_test.execute)
         else:
+            # Mostre erro e pule para o próximo teste
             error_message = usb_test.result.get("error", "Erro desconhecido ao inicializar o teste de USB.")
             messagebox.showerror(
                 "Erro",
                 f"Ocorreu um erro ao inicializar o teste de USB:\n\n{error_message}"
             )
-            
             # Executa o próximo teste
-            self.root.after(100, self._execute_next_test)    
+            self.root.after(100, self._execute_next_test)
+
     def _run_webcam_test(self):
         """Executa o teste de webcam."""
         webcam_test = WebcamTest()
@@ -950,16 +912,14 @@ class MainWindow:
                         "Webcam",
                         webcam_test.get_result(),
                         webcam_test.get_formatted_result()
-                    ))                except Exception as e:
+                    ))
+                except Exception as e:
                     messagebox.showerror(
                         "Erro",
                         f"Ocorreu um erro ao executar o teste de webcam:\n\n{e}"
                     )
-                    
                     # Executa o próximo teste
                     self.root.after(100, self._execute_next_test)
-            
-            # Inicia a thread
             threading.Thread(target=run_test, daemon=True).start()
         else:
             error_message = webcam_test.result.get("error", "Erro desconhecido ao inicializar o teste de webcam.")
@@ -967,35 +927,28 @@ class MainWindow:
                 "Erro",
                 f"Ocorreu um erro ao inicializar o teste de webcam:\n\n{error_message}"
             )
-            
             # Executa o próximo teste
             self.root.after(100, self._execute_next_test)
 
     def _run_audio_test(self):
         """Executa o teste de áudio."""
         audio_test = AudioTest()
-        
+
         if audio_test.initialize():
-            # Executa o teste em uma thread separada
             def run_test():
                 try:
                     audio_test.execute()
-                    
-                    # Registra o resultado
                     self.root.after(0, lambda: self._handle_test_completion(
                         "Áudio",
                         audio_test.get_result(),
                         audio_test.get_formatted_result()
-                    ))                except Exception as e:
+                    ))
+                except Exception as e:
                     messagebox.showerror(
                         "Erro",
                         f"Ocorreu um erro ao executar o teste de áudio:\n\n{e}"
                     )
-                    
-                    # Executa o próximo teste
                     self.root.after(100, self._execute_next_test)
-            
-            # Inicia a thread
             threading.Thread(target=run_test, daemon=True).start()
         else:
             error_message = audio_test.result.get("error", "Erro desconhecido ao inicializar o teste de áudio.")
@@ -1003,8 +956,6 @@ class MainWindow:
                 "Erro",
                 f"Ocorreu um erro ao inicializar o teste de áudio:\n\n{error_message}"
             )
-            
-            # Executa o próximo teste
             self.root.after(100, self._execute_next_test)
 
 
@@ -1018,7 +969,7 @@ class MainWindow:
                 "Por favor, preencha este campo antes de continuar."
             )
             return
-        
+
         if not self.workbench_id.get().strip():
             messagebox.showwarning(
                 "Campo Obrigatório",
@@ -1036,8 +987,11 @@ class MainWindow:
             }
             self.report_generator.set_identification(identification_info)
 
-            # Define as informações de hardware
-            hardware_info = {
+            # Obtém todas as informações de hardware já coletadas
+            hardware_info = self.hardware_info.get_all_info()
+
+            # Atualiza com o que está na interface (garante que o relatório reflete o que o usuário vê)
+            hardware_info.update({
                 'motherboard': {
                     'manufacturer': self.motherboard_manufacturer_var.get(),
                     'model': self.motherboard_model_var.get(),
@@ -1046,10 +1000,6 @@ class MainWindow:
                 'cpu': {
                     'brand': self.cpu_brand_var.get(),
                     'model': self.cpu_model_var.get()
-                },
-                'ram': {
-                    'total': self.ram_total_var.get(),
-                    'slots_used': self.ram_slots_var.get()
                 },
                 'display': {
                     'resolution': self.display_resolution_var.get()
@@ -1067,8 +1017,12 @@ class MainWindow:
                     'adapter_name': self.wifi_adapter_var.get(),
                     'adapter_status': self.wifi_status_var.get(),
                     'connected_ssid': self.wifi_ssid_var.get()
-                }
-            }
+                },
+                'ram': self.hardware_info.get_ram_info(),
+                'disks': self.hardware_info.get_disk_info(),
+                'gpu': self.hardware_info.get_gpu_info(),
+            })
+
             self.report_generator.set_hardware_info(hardware_info)
 
             # Define o diretório de saída
