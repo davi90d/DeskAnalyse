@@ -1,4 +1,4 @@
-# DeskAnalyse
+<!-- # DeskAnalyse
 Uma ferramenta criada por mim, para um projeto de implementação em fabrica. 
 This is my first Python project, developed as part of my Computer Engineering degree. The goal was to create a machine analysis tool for use in a factory environment.
 
@@ -59,4 +59,4 @@ Python 🐍
 
 System and hardware analysis libraries
 
-AI-assisted development
+AI-assisted development -->

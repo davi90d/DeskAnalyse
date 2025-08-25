@@ -13,7 +13,32 @@ import threading
 # Importações dos módulos da aplicação
 from gui.main_window import MainWindow
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+import socket
+
 def main():
+    logging.debug("main() function called.")
+    
+    # Tenta criar um socket para garantir uma única instância
+    try:
+        # Cria um socket TCP/IP
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Tenta vincular o socket a um endereço e porta conhecidos
+        # Usamos localhost e uma porta arbitrária que provavelmente não estará em uso
+        s.bind(("127.0.0.1", 12345)) 
+        # Adiciona o socket ao objeto global para evitar que seja coletado pelo garbage collector
+        # e para manter a porta ocupada enquanto a aplicação estiver em execução
+        global _single_instance_socket
+        _single_instance_socket = s
+        logging.info("Aplicação iniciada como instância única.")
+    except socket.error:
+        logging.warning("Outra instância da aplicação já está em execução. Saindo.")
+        sys.exit(0) # Sai se outra instância já estiver rodando
+
+
     """Função principal para iniciar a aplicação."""
     # Configura o diretório base para recursos quando empacotado com PyInstaller
     if getattr(sys, 'frozen', False):
@@ -29,13 +54,7 @@ def main():
     root = tk.Tk()
     root.title("Diagnóstico de Hardware")
     
-    # Evita múltiplas instâncias verificando se já existe uma janela
-    try:
-        # Tenta definir um atributo único para verificar se já existe uma instância
-        root.attributes('-unique', True)
-    except:
-        # Se falhar, continua normalmente
-        pass
+
     
     # Cria a janela principal da aplicação
     app = MainWindow(root)
